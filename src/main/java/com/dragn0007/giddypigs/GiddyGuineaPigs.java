@@ -18,7 +18,6 @@ import static com.dragn0007.giddypigs.GiddyGuineaPigs.MODID;
 @Mod(MODID)
 public class GiddyGuineaPigs
 {
-
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MODID = "giddypigs";
 

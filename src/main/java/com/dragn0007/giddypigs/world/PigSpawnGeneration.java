@@ -17,22 +17,10 @@ public class PigSpawnGeneration {
 
         addEntityToSpecificBiomes(event, EntityTypes.GUINEA_PIG_ENTITY.get(),
                 GiddyGuineaPigsCommonConfig.GUINEA_PIG_WEIGHT.get(), 1, 4,
-                Biomes.JUNGLE, Biomes.SPARSE_JUNGLE,
-                Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU,
-                Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS
+                Biomes.SPARSE_JUNGLE, Biomes.MEADOW, Biomes.SAVANNA
         );
-
     }
 
-    private static void addEntityToAllBiomesExceptThese(BiomeLoadingEvent event, EntityType<?> type,
-                                                        int weight, int minCount, int maxCount, ResourceKey<Biome>... biomes) {
-        boolean isBiomeSelected = Arrays.stream(biomes).map(ResourceKey::location)
-                .map(Object::toString).anyMatch(s -> s.equals(event.getName().toString()));
-
-        if(!isBiomeSelected) {
-            addEntityToAllBiomes(event, type, weight, minCount, maxCount);
-        }
-    }
     @SafeVarargs
     private static void addEntityToSpecificBiomes(BiomeLoadingEvent event, EntityType<?> type,
                                                   int weight, int minCount, int maxCount, ResourceKey<Biome>... biomes) {
@@ -43,26 +31,7 @@ public class PigSpawnGeneration {
             addEntityToAllBiomes(event, type, weight, minCount, maxCount);
         }
     }
-    private static void addEntityToAllOverworldBiomes(BiomeLoadingEvent event, EntityType<?> type,
-                                                      int weight, int minCount, int maxCount) {
-        if(!event.getCategory().equals(Biome.BiomeCategory.THEEND) && !event.getCategory().equals(Biome.BiomeCategory.NETHER)) {
-            addEntityToAllBiomes(event, type, weight, minCount, maxCount);
-        }
-    }
-    private static void addEntityToAllBiomesNoNether(BiomeLoadingEvent event, EntityType<?> type,
-                                                     int weight, int minCount, int maxCount) {
-        if(!event.getCategory().equals(Biome.BiomeCategory.NETHER)) {
-            List<MobSpawnSettings.SpawnerData> base = event.getSpawns().getSpawner(type.getCategory());
-            base.add(new MobSpawnSettings.SpawnerData(type,weight, minCount, maxCount));
-        }
-    }
-    private static void addEntityToAllBiomesNoEnd(BiomeLoadingEvent event, EntityType<?> type,
-                                                  int weight, int minCount, int maxCount) {
-        if(!event.getCategory().equals(Biome.BiomeCategory.THEEND)) {
-            List<MobSpawnSettings.SpawnerData> base = event.getSpawns().getSpawner(type.getCategory());
-            base.add(new MobSpawnSettings.SpawnerData(type,weight, minCount, maxCount));
-        }
-    }
+
     private static void addEntityToAllBiomes(BiomeLoadingEvent event, EntityType<?> type,
                                              int weight, int minCount, int maxCount) {
         List<MobSpawnSettings.SpawnerData> base = event.getSpawns().getSpawner(type.getCategory());
