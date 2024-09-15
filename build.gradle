@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle'
 
 version = '1.18.2-1.0'
 group = 'com.dragn0007.giddypigs'
-archivesBaseName = 'Giddy_Pigs'
+archivesBaseName = 'Guinea_Pigs'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
