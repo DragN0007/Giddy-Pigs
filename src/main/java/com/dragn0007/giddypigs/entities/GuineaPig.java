@@ -1,5 +1,6 @@
 package com.dragn0007.giddypigs.entities;
 
+import com.dragn0007.giddypigs.entities.ai.PiggieFollowLeaderGoal;
 import com.dragn0007.giddypigs.entities.util.EntityTypes;
 import com.dragn0007.giddypigs.util.GGPTags;
 import net.minecraft.core.BlockPos;
@@ -12,6 +13,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -22,11 +25,16 @@ import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.Ocelot;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -66,11 +74,13 @@ public class GuineaPig extends TamableAnimal implements IAnimatable {
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.8F));
 		this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
 		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
-		this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
+		this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.1D));
 		this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 		this.goalSelector.addGoal(0, new SitWhenOrderedToGoal(this));
+
+		this.goalSelector.addGoal(4, new PiggieFollowLeaderGoal(this));
 
 		this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, LivingEntity.class, 15.0F, 1.8F, 1.8F, livingEntity
 				-> livingEntity instanceof Wolf
@@ -108,7 +118,7 @@ public class GuineaPig extends TamableAnimal implements IAnimatable {
 	}
 
 	public int getMaxHerdSize() {
-		return 3;
+		return 4;
 	}
 
 	public boolean hasFollowers() {
@@ -158,10 +168,10 @@ public class GuineaPig extends TamableAnimal implements IAnimatable {
 		if (event.isMoving()) {
 			if (currentSpeed > speedThreshold) {
 				event.getController().setAnimation(new AnimationBuilder().addAnimation("walk", ILoopType.EDefaultLoopTypes.LOOP));
-				event.getController().setAnimationSpeed(2.0); //for running
+				event.getController().setAnimationSpeed(1.8); //for running
 			} else {
 				event.getController().setAnimation(new AnimationBuilder().addAnimation("walk", ILoopType.EDefaultLoopTypes.LOOP));
-				event.getController().setAnimationSpeed(1.0);
+				event.getController().setAnimationSpeed(1.2);
 			}
 		} else {
 			if (isInSittingPose()) {
@@ -186,11 +196,6 @@ public class GuineaPig extends TamableAnimal implements IAnimatable {
 		return factory;
 	}
 
-	public void aiStep() {
-		super.aiStep();
-
-	}
-
 	protected SoundEvent getAmbientSound() {
 		super.getAmbientSound();
 		return SoundEvents.RABBIT_AMBIENT;
@@ -210,8 +215,48 @@ public class GuineaPig extends TamableAnimal implements IAnimatable {
 		this.playSound(SoundEvents.RABBIT_JUMP, 0.15F, 1.0F);
 	}
 
-	public boolean isFood(ItemStack p_28271_) {
-		return FOOD_ITEMS.test(p_28271_);
+	public boolean isFood(ItemStack itemStack) {
+		return FOOD_ITEMS.test(itemStack);
+	}
+
+	public InteractionResult mobInteract(Player player, InteractionHand hand) {
+		ItemStack itemStack = player.getItemInHand(hand);
+		if (this.isTame()) {
+			if (this.isFood(itemStack)) {
+				if (this.getHealth() < this.getMaxHealth()) {
+					// heal
+					this.usePlayerItem(player, hand, itemStack);
+					this.heal(itemStack.getFoodProperties(this).getNutrition());
+					this.gameEvent(GameEvent.MOB_INTERACT, this.eyeBlockPosition());
+					return InteractionResult.sidedSuccess(this.level.isClientSide);
+				} else if (this.canFallInLove() && !this.level.isClientSide) {
+					// love mode
+					this.usePlayerItem(player, hand, itemStack);
+					this.setInLove(player);
+					this.gameEvent(GameEvent.MOB_INTERACT, this.eyeBlockPosition());
+					return InteractionResult.SUCCESS;
+				}
+
+			} else if (player.isCrouching()) {
+				// sit
+				if (this.isOrderedToSit()) {
+					this.setOrderedToSit(false);
+				} else {
+					this.setOrderedToSit(true);
+				}
+				return InteractionResult.SUCCESS;
+			}
+
+		} else if (this.isFood(itemStack) && !this.level.isClientSide) {
+			this.usePlayerItem(player, hand, itemStack);
+
+			// try to tame (33% chance to succeed)
+			if (this.random.nextInt(3) == 0 && !ForgeEventFactory.onAnimalTame(this, player)) {
+				this.tame(player);
+				return InteractionResult.SUCCESS;
+			}
+		}
+		return InteractionResult.sidedSuccess(this.level.isClientSide);
 	}
 
 	// Generates the base texture

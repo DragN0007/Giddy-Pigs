@@ -1,5 +1,7 @@
 package com.dragn0007.giddypigs;
 
+import com.dragn0007.giddypigs.entities.util.EntityTypes;
+import com.dragn0007.giddypigs.items.GGPItems;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,10 +23,10 @@ public class GiddyGuineaPigs
     {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-//        GGGPItems.register(eventBus);
+        GGPItems.register(eventBus);
 //        GGPBlocks.register(eventBus);
-//        EntityTypes.ENTITY_TYPES.register(eventBus);
-//
+        EntityTypes.ENTITY_TYPES.register(eventBus);
+
         GeckoLib.initialize();
 
         MinecraftForge.EVENT_BUS.register(this);

@@ -10,7 +10,7 @@ public class GGPTags {
 
     public static class Items {
 
-        public static final TagKey<Item> GUINEA_PIG_FOOD = forgeTag("guinea_pig_food");
+        public static final TagKey<Item> GUINEA_PIG_FOOD = tag("guinea_pig_food");
 
         private static TagKey<Item> tag (String name) {
             return ItemTags.create(new ResourceLocation(GiddyGuineaPigs.MODID, name));
