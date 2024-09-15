@@ -1,4 +1,4 @@
-package com.dragn0007.giddypigs.world.gen;
+package com.dragn0007.giddypigs.world;
 
 import com.dragn0007.giddypigs.entities.util.EntityTypes;
 import com.dragn0007.giddypigs.util.GiddyGuineaPigsCommonConfig;
