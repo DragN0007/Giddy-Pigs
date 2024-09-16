@@ -1,0 +1,6 @@
+{
+	"parent": "giddypigs:block/parent/food_dish_parent",
+	"textures": {
+		"food_fish": "giddypigs:blocks/food_dish_black"
+	}
+}

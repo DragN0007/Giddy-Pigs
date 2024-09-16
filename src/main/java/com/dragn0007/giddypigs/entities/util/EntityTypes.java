@@ -17,6 +17,6 @@ public class EntityTypes {
     public static final RegistryObject<EntityType<GuineaPig>> GUINEA_PIG_ENTITY = ENTITY_TYPES.register("guinea_pig_entity",
             () -> EntityType.Builder.of(GuineaPig::new,
                     MobCategory.CREATURE)
-                    .sized(0.7f,0.7f)
+                    .sized(0.5f,0.5f)
                     .build(new ResourceLocation(MODID,"guinea_pig").toString()));
 }

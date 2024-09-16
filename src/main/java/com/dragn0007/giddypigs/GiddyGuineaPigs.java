@@ -1,5 +1,6 @@
 package com.dragn0007.giddypigs;
 
+import com.dragn0007.giddypigs.blocks.GGPBlocks;
 import com.dragn0007.giddypigs.entities.util.EntityTypes;
 import com.dragn0007.giddypigs.items.GGPItems;
 import com.dragn0007.giddypigs.util.GiddyGuineaPigsCommonConfig;
@@ -26,7 +27,7 @@ public class GiddyGuineaPigs
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         GGPItems.register(eventBus);
-//        GGPBlocks.register(eventBus);
+        GGPBlocks.register(eventBus);
         EntityTypes.ENTITY_TYPES.register(eventBus);
 
         GeckoLib.initialize();
