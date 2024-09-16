@@ -1,7 +1,11 @@
 package com.dragn0007.giddypigs.blocks.custom;
 
 import com.dragn0007.giddypigs.blocks.DecorRotator;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -12,6 +16,10 @@ public class EnclosurePaneCorner extends DecorRotator {
 
     public EnclosurePaneCorner() {
         super(NORTH, EAST, SOUTH, WEST);
+    }
+
+    public boolean isPathfindable(BlockState p_53306_, BlockGetter p_53307_, BlockPos p_53308_, PathComputationType p_53309_) {
+        return false;
     }
 
     public static final VoxelShape NORTH = Stream.of(

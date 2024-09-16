@@ -1,17 +1,36 @@
 package com.dragn0007.giddypigs.blocks.custom;
 
 import com.dragn0007.giddypigs.blocks.DecorRotator;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
-public class EnclosurePane extends DecorRotator {
+public class EnclosurePane extends DecorRotator implements SimpleWaterloggedBlock {
 
     public EnclosurePane() {
         super(NORTH, EAST, SOUTH, WEST);
+    }
+
+    public boolean isPathfindable(BlockState p_53306_, BlockGetter p_53307_, BlockPos p_53308_, PathComputationType p_53309_) {
+        return false;
     }
 
     public static final VoxelShape NORTH = Stream.of(
@@ -29,4 +48,9 @@ public class EnclosurePane extends DecorRotator {
     public static final VoxelShape WEST = Stream.of(
             Block.box(7, 0, 0, 9, 24, 16)
     ).reduce((v1, v2) -> Shapes.join(v1, v2,BooleanOp.OR)).get();
+
+    @Override
+    public boolean isCollisionShapeFullBlock(BlockState p_181242_, BlockGetter p_181243_, BlockPos p_181244_) {
+        return false;
+    }
 }
