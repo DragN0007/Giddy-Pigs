@@ -33,7 +33,7 @@ public class PixelPlacerContainer extends Block implements EntityBlock {
 
 
     public PixelPlacerContainer() {
-        super(Properties.of(MATERIAL));
+        super(Properties.of(MATERIAL).noDrops());
     }
 
     @Override
